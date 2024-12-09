@@ -1,4 +1,19 @@
 version: '3.8'
 
 services:
-    name
+  proxysql:
+    image: proxysql
+    container_name: prod_env_proxysql
+    restart: always
+    environment:
+      MYSQL_MASTER_HOST: ${MYSQL_MASTER_HOST}
+      MYSQL_REPLICA_HOST: ${MYSQL_REPLICA_HOST}
+      CA_PATH: ${CA_PATH}
+      PROXYSQL_PORT: ${PROXYSQL_PORT}
+      PROXYSQL_ADMIN_PORT: ${PROXY_ADMIN_PORT}
+    ports:
+      - ${PROXYSQL_PORT}:6033
+      - ${PROXYSQL_ADMIN_PORT}:6032
+    volumes:
+      - ./proxysql.cnf:/etc/proxysql.cnf
+    command: ["--config-file=/etc/proxysql.cnf"]
