@@ -5,21 +5,24 @@ DELETE FROM mysql_query_rules;
 
 -- Добавляем мастер-сервер (группа 10 для записи)
 INSERT INTO mysql_servers(hostgroup_id, hostname, port, weight)
-VALUES (10, '${MASTER_HOST}', ${MASTER_PORT}, 100);
+VALUES (10, '${MYSQL_MASTER_HOST}', ${MASTER_PORT}, 100);
 
 -- Добавляем реплику (группа 20 для чтения)
 INSERT INTO mysql_servers(hostgroup_id, hostname, port, weight)
-VALUES (20, '${REPLICA_HOST}', ${REPLICA_PORT}, 100);
+VALUES (20, '${MYSQL_REPLICA_HOST}', ${REPLICA_PORT}, 100);
 
 -- Создаем пользователя для работы с ProxySQL
 INSERT INTO mysql_users(username, password, default_hostgroup, transaction_persistent, default_schema)
 VALUES ('${MYSQL_USER}', '${MYSQL_PASSWORD}', 10, 1, '${MYSQL_DATABASE}');
 
 -- Настройка сертификата SSL (если используется)
-SET mysql_ssl_options='--ssl-ca=${CA_CERTIFICATE}';
+SET mysql_ssl_options='--ssl-ca=${CA_CERTIFIATE_PATH}';
 
 -- Применяем настройки
 LOAD MYSQL SERVERS TO RUNTIME;
 LOAD MYSQL USERS TO RUNTIME;
 SAVE MYSQL SERVERS TO DISK;
 SAVE MYSQL USERS TO DISK;
+
+
+
