@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   proxysql:
-    image: proxysql
+    image: proxysql/proxysql:latest
     container_name: prod_env_proxysql
     restart: always
     environment:
@@ -16,4 +16,9 @@ services:
       - ${PROXYSQL_ADMIN_PORT}:6032
     volumes:
       - ./proxysql.cnf:/etc/proxysql.cnf
-    command: ["--config-file=/etc/proxysql.cnf"]
+      - ./configure.sql:/docker-entrypoint-initdb.d/configure.sql
+    entrypoint: >
+            sh -c "
+            proxysql --config-file=/etc/proxysql.cnf &&
+            mysql --user=admin --password=admin --host=127.0.0.1 --port=6032 < /docker-entrypoint-initdb.d/configure.sql
+            "
